@@ -62,8 +62,7 @@ func RequestStockData() Response {
 	}
 	// This unmarshals the response.
 	var responseObj Response
-	var result map[string]any
-	err = json.Unmarshal(body, &result)
+	err = json.Unmarshal(body, &responseObj)
 	// This handles errors.
 	if err != nil {
 		log.Fatal(err)
