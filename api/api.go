@@ -1,12 +1,7 @@
 package api
 
-// This program should request data from a stock API and return the data in an Object.
-// The program should be able to handle errors and return a message if the API is down.
-// This program should request from the alpha vantage API.
-
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 
 	"log"
@@ -14,7 +9,6 @@ import (
 	"time"
 )
 
-// Write a struct that resembles the metadata of the response.
 type MetaData struct {
 	Information string `json:"1. Information"`
 	Symbol      string `json:"2. Symbol"`
@@ -37,35 +31,57 @@ type Response struct {
 	Stocks   map[string]Stock `json:"Time Series (5min)"`
 }
 
-// This is the function that requests data from the API. It should take in a stock symbol as a parameter.
-func RequestStockData(symbol string) Response {
+func Get(url string, params map[string]string) ([]byte, error) {
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: time.Second * 10,
 	}
-	url := fmt.Sprintf("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=%s&interval=5min&apikey=demo", symbol)
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
+	q := request.URL.Query()
+	for key, value := range params {
+		q.Add(key, value)
+	}
+	request.URL.RawQuery = q.Encode()
 	response, err := client.Do(request)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	var responseObj Response
-	err = json.Unmarshal([]byte(body), &responseObj)
+	return body, nil
+}
+
+func RequestStockData(symbol string) []byte {
+	api_url := "https://www.alphavantage.co/query"
+	params := map[string]string{
+		"function": "TIME_SERIES_INTRADAY",
+		"symbol":   symbol,
+		"interval": "5min",
+		"apikey":   "demo",
+	}
+	body, err := Get(api_url, params)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return responseObj
+	return body
 }
 
-// This is the function that returns the data from the API.
+func ParseStockData(data []byte) Response {
+	var stock_data Response
+	var err = json.Unmarshal([]byte(data), &stock_data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return stock_data
+}
+
 func GetStockData(symbol string) map[string]Stock {
-	responseObj := RequestStockData(symbol)
-	return responseObj.Stocks
+	raw_data := RequestStockData(symbol)
+	parsed_data := ParseStockData(raw_data)
+	return parsed_data.Stocks
 }
