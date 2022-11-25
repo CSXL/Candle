@@ -22,34 +22,33 @@ import (
 	"strings"
 
 	"github.com/CSXL/Candle/api"
-	"github.com/charmbracelet/lipgloss"
 )
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Print("> ")
+		fmt.Print("--> ")
 		scanner.Scan()
-		input := scanner.Text()
-		args := strings.Split(input, " ")
+		args := strings.Split(scanner.Text(), " ")
 
 		switch args[0] {
 		case "about":
 			fmt.Println("Candle CLI")
 			fmt.Println("CSX Labs")
+			fmt.Println("Made w/ <3 by @absozero and @ecsbeats")
 		case "get-info":
-			api.GetStockData()
-		case "stfu":
-			var style = lipgloss.NewStyle().
-				Bold(true).
-				Foreground(lipgloss.Color("#FAFAFA")).
-				Background(lipgloss.Color("#7D56F4")).
-				PaddingTop(2).
-				PaddingLeft(4).
-				Width(22)
+			stock_data := api.GetStockData(args[1])
+			// prints first 10 data points (for testing)
+			var i int = 0
+			for key, value := range stock_data {
+				if i == 10 {
+					break
+				}
+				fmt.Println(key, value)
+				i++
+			}
 
-			fmt.Println(style.Render("Hello, kitty."))
 		case "exit":
 			os.Exit(0)
 		default:
