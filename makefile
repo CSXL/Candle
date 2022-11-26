@@ -1,3 +1,8 @@
+install:
+	@echo "Installing dependencies..."
+	@go install
+	@echo "Dependencies installed."
+
 run:
 	@echo "Running Candle..."
 	@go run main.go
@@ -10,6 +15,7 @@ build:
 clean:
 	@echo "Cleaning Candle..."
 	rm -rf bin/
+	go clean
 	@echo "Clean succeeded."
 
 test:
