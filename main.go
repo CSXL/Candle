@@ -9,6 +9,8 @@ import (
 	"github.com/CSXL/Candle/api"
 )
 
+var osExit = os.Exit // We can now mock this function in our tests.
+
 func main() {
 	var COMMAND_PROVIDED = false
 	if len(os.Args) > 1 {
@@ -46,7 +48,7 @@ func main() {
 
 		case "exit":
 			fmt.Println("Exiting...")
-			os.Exit(0)
+			osExit(0)
 		default:
 			fmt.Printf("Invalid command: %s\n", args[0])
 		}

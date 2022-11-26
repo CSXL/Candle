@@ -3,7 +3,6 @@ package main
 import (
 	"io"
 	"os"
-	"os/exec"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,18 +42,18 @@ func TestAbout(t *testing.T) {
 
 // Test the exit command
 func TestExit(t *testing.T) {
-	os.Args = []string{"candle", "exit"}
-	if os.Getenv("BE_CRASHER") == "1" {
-		os.Args = []string{"candle", "exit"}
-		main()
-		return
+	// Save current function and restore at the end:
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var exit_code int
+	mockExit := func(code int) {
+		exit_code = code
 	}
-	cmd := exec.Command(original_arguments[0], "-test.run=TestExit")
-	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
-	err := cmd.Run()
-	e, ok := err.(*exec.ExitError)
-	assert.Nil(t, e, "Process ran with err %v, want exit status 0", e)
-	assert.False(t, ok, "Process returned non-zero exit code %v", e)
+
+	osExit = mockExit
+	main()
+	assert.Equal(t, 0, exit_code, "Exit code should be 0, but was %d", exit_code)
 }
 
 // Test an invalid command

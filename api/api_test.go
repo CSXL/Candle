@@ -31,7 +31,7 @@ func TestGet(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Equal(t, string(res), expected_message)
+	assert.Equal(t, expected_message, string(res))
 }
 
 func TestRequestStockData(t *testing.T) {
@@ -47,17 +47,17 @@ func TestParseStockData(t *testing.T) {
 		panic(err)
 	}
 	stock_data := ParseStockData(data)
-	assert.Equal(t, stock_data.MetaData.Information, "Intraday (5min) open, high, low, close prices and volume")
-	assert.Equal(t, stock_data.MetaData.Symbol, "IBM")
-	assert.Equal(t, stock_data.MetaData.LastRefresh, "2096-09-10 16:00:00")
-	assert.Equal(t, stock_data.MetaData.Interval, "5min")
-	assert.Equal(t, stock_data.MetaData.OutputSize, "Compact")
-	assert.Equal(t, stock_data.MetaData.TimeZone, "US/Eastern")
-	assert.Equal(t, stock_data.Stocks["2096-09-10 16:00:00"].Open, "143.0000")
-	assert.Equal(t, stock_data.Stocks["2096-09-10 16:00:00"].High, "143.0000")
-	assert.Equal(t, stock_data.Stocks["2096-09-10 16:00:00"].Low, "143.0000")
-	assert.Equal(t, stock_data.Stocks["2096-09-10 16:00:00"].Close, "143.0000")
-	assert.Equal(t, stock_data.Stocks["2096-09-10 16:00:00"].Volume, "0")
+	assert.Equal(t, "Intraday (5min) open, high, low, close prices and volume", stock_data.MetaData.Information)
+	assert.Equal(t, "IBM", stock_data.MetaData.Symbol)
+	assert.Equal(t, "2096-09-10 16:00:00", stock_data.MetaData.LastRefresh)
+	assert.Equal(t, "5min", stock_data.MetaData.Interval)
+	assert.Equal(t, "Compact", stock_data.MetaData.OutputSize)
+	assert.Equal(t, "US/Eastern", stock_data.MetaData.TimeZone)
+	assert.Equal(t, "143.0000", stock_data.Stocks["2096-09-10 16:00:00"].Open)
+	assert.Equal(t, "143.0000", stock_data.Stocks["2096-09-10 16:00:00"].High)
+	assert.Equal(t, "143.0000", stock_data.Stocks["2096-09-10 16:00:00"].Low)
+	assert.Equal(t, "143.0000", stock_data.Stocks["2096-09-10 16:00:00"].Close)
+	assert.Equal(t, "0", stock_data.Stocks["2096-09-10 16:00:00"].Volume)
 }
 
 func TestGetStockData(t *testing.T) {
