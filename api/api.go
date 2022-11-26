@@ -1,83 +1,87 @@
 package api
 
-// This program should request data from a stock API and return the data in an Object.
-// The program should be able to handle errors and return a message if the API is down.
-// This program should request from the alpha vantage API.
-
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	"io"
+
 	"log"
 	"net/http"
 	"time"
 )
 
-// This is the struct that holds the data from the API.
+type MetaData struct {
+	Information string `json:"1. Information"`
+	Symbol      string `json:"2. Symbol"`
+	LastRefresh string `json:"3. Last Refreshed"`
+	Interval    string `json:"4. Interval"`
+	OutputSize  string `json:"5. Output Size"`
+	TimeZone    string `json:"6. Time Zone"`
+}
+
 type Stock struct {
-	Open     float64 `json:"1. open"`
-	High     float64 `json:"2. high"`
-	Low      float64 `json:"3. low"`
-	Close    float64 `json:"4. close"`
-	Volume   float64 `json:"5. volume"`
-	Adjusted float64 `json:"6. adjusted close"`
+	Open   string `json:"1. open"`
+	High   string `json:"2. high"`
+	Low    string `json:"3. low"`
+	Close  string `json:"4. close"`
+	Volume string `json:"5. volume"`
 }
 
-// This is the struct that holds the data from the API.
-type TimeSeries struct {
-	Stocks map[string]Stock `json:"Time Series (5min)"`
-}
-
-// This is the struct that holds the data from the API.
 type Response struct {
-	TimeSeries TimeSeries `json:"Time Series (5min)"`
+	MetaData MetaData         `json:"Meta Data"`
+	Stocks   map[string]Stock `json:"Time Series (5min)"`
 }
 
-// This is the function that requests data from the API.
-func RequestStockData() Response {
+func Get(url string, params map[string]string) ([]byte, error) {
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: time.Second * 10,
 	}
-	// This is the URL to the API.
-	url := "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo"
-	// This is the request to the API.
 	request, err := http.NewRequest("GET", url, nil)
-	// This handles errors.
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	// This sends the request to the API.
+	q := request.URL.Query()
+	for key, value := range params {
+		q.Add(key, value)
+	}
+	request.URL.RawQuery = q.Encode()
 	response, err := client.Do(request)
-	// This handles errors.
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	// This closes the response.
 	defer response.Body.Close()
-	// This reads the response.
-	body, err := ioutil.ReadAll(response.Body)
-	// This handles errors.
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	// This unmarshals the response.
-	var responseObj Response
-	err = json.Unmarshal(body, &responseObj)
-	// This handles errors.
-	if err != nil {
-		log.Fatal(err)
-	}
-	// This returns the response.
-	return responseObj
+	return body, nil
 }
 
-// This is the function that returns the data from the API.
-func GetStockData() {
-	// This requests data from the API.
-	responseObj := RequestStockData()
-	// This iterates through the response.
-	for k, v := range responseObj.TimeSeries.Stocks {
-		// This prints the data.
-		fmt.Println(k, v)
+func RequestStockData(symbol string) []byte {
+	api_url := "https://www.alphavantage.co/query"
+	params := map[string]string{
+		"function": "TIME_SERIES_INTRADAY",
+		"symbol":   symbol,
+		"interval": "5min",
+		"apikey":   "demo",
 	}
+	body, err := Get(api_url, params)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return body
+}
+
+func ParseStockData(data []byte) Response {
+	var stock_data Response
+	var err = json.Unmarshal([]byte(data), &stock_data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return stock_data
+}
+
+func GetStockData(symbol string) map[string]Stock {
+	raw_data := RequestStockData(symbol)
+	parsed_data := ParseStockData(raw_data)
+	return parsed_data.Stocks
 }
