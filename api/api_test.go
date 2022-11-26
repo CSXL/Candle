@@ -1,9 +1,6 @@
 package api
 
 import (
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"os"
 	"testing"
 
@@ -24,17 +21,17 @@ func TestMain(m *testing.M) {
 }
 
 func TestGet(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Hello, client")
-	}))
-	defer ts.Close()
+	url := "https://example.com/hello_world?apikey=demo"
+	expected_message := "CSX Labs Rules!"
+	httpmock.RegisterResponder("GET", url,
+		httpmock.NewStringResponder(200, expected_message))
 
-	res, err := Get(ts.URL, nil)
+	res, err := Get(url, nil)
 	if err != nil {
 		t.Error(err)
 	}
 
-	assert.Equal(t, string(res), "Hello, client")
+	assert.Equal(t, string(res), expected_message)
 }
 
 func TestRequestStockData(t *testing.T) {
