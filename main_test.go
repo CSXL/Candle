@@ -45,16 +45,16 @@ func TestAbout(t *testing.T) {
 func TestExit(t *testing.T) {
 	os.Args = []string{"candle", "exit"}
 	if os.Getenv("BE_CRASHER") == "1" {
+		os.Args = []string{"candle", "exit"}
 		main()
 		return
 	}
-	cmd := exec.Command(original_arguments[0], "-test.run=TestCrasher", "-args", os.Args[0], os.Args[1])
+	cmd := exec.Command(original_arguments[0], "-test.run=TestExit")
 	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
 	err := cmd.Run()
-	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
-		return
-	}
-	t.Fatalf("Process ran with err %v, want exit status 0", err)
+	e, ok := err.(*exec.ExitError)
+	assert.Nil(t, e, "Process ran with err %v, want exit status 0", e)
+	assert.False(t, ok, "Process returned non-zero exit code %v", e)
 }
 
 // Test an invalid command

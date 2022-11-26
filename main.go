@@ -46,7 +46,7 @@ func main() {
 
 		case "exit":
 			fmt.Println("Exiting...")
-			os.Exit(1)
+			os.Exit(0)
 		default:
 			fmt.Printf("Invalid command: %s\n", args[0])
 		}
