@@ -8,8 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Function to capture standard output and run the main function
-func CaptureStandardOutput() []byte {
+// Function to capture standard output from the main function with the given os.Args
+func CaptureStandardOutput(os_args ...string) []byte {
+	os.Args = os_args
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 	main()
@@ -28,15 +29,13 @@ func TestMain(m *testing.M) {
 
 // Test the get-info command
 func TestGetInfo(t *testing.T) {
-	os.Args = []string{"candle", "get-info", "IBM"}
-	var out = CaptureStandardOutput()
+	var out = CaptureStandardOutput("candle", "get-info", "IBM")
 	assert.NotEmpty(t, out)
 }
 
 // Test the about command
 func TestAbout(t *testing.T) {
-	os.Args = []string{"candle", "about"}
-	var out = CaptureStandardOutput()
+	var out = CaptureStandardOutput("candle", "about")
 	assert.Equal(t, "--> Candle CLI\nCSX Labs\nMade w/ <3 by @absozero and @ecsbeats\n", string(out))
 }
 
@@ -52,13 +51,13 @@ func TestExit(t *testing.T) {
 	}
 
 	osExit = mockExit
+	os.Args = []string{"candle", "exit"}
 	main()
 	assert.Equal(t, 0, exit_code, "Exit code should be 0, but was %d", exit_code)
 }
 
 // Test an invalid command
 func TestInvalidCommand(t *testing.T) {
-	os.Args = []string{"candle", "veryinvalidcommand"}
-	var out = CaptureStandardOutput()
+	var out = CaptureStandardOutput("candle", "veryinvalidcommand")
 	assert.Equal(t, "--> Invalid command: veryinvalidcommand\n", string(out))
 }
