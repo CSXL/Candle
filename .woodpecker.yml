@@ -6,3 +6,4 @@ pipeline:
     commands:
       - go build
       - go test
+      - cat README.md
