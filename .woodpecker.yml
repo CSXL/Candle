@@ -1,5 +1,7 @@
+
+
 pipeline:
-  backend:
+  build:
     image: golang
     commands:
       - go build
