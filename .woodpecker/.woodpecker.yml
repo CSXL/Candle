@@ -1,9 +1,6 @@
-
-
 pipeline:
-  build:
+  backend:
     image: golang
     commands:
       - go build
       - go test
-      - cat README.md
