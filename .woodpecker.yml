@@ -5,3 +5,4 @@ pipeline:
       - go get
       - go build
       - go test
+      - echo "Done"
