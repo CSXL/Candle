@@ -1,0 +1,9 @@
+
+
+pipeline:
+  build:
+    image: golang
+    commands:
+      - go build
+      - go test
+      - cat README.md
