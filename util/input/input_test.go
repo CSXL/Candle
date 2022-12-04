@@ -16,10 +16,11 @@ func TestScanner_Scan(t *testing.T) {
 	r, w, _ := os.Pipe()
 	os.Stdin = r
 	var scanner = NewScanner()
+	scanner.WriteString("This should do nothing.")
 	w.WriteString("CSX Labs Rules!")
 	w.Close()
 	assert.True(t, scanner.Scan())
-	assert.Equal(t, "CSX Labs Rules!", scanner.Scanner.Text())
+	assert.Equal(t, "CSX Labs Rules!", scanner.Text())
 }
 
 func TestNewMockScanner(t *testing.T) {
@@ -31,5 +32,5 @@ func TestMockScanner_Scan(t *testing.T) {
 	var scanner = NewMockScanner()
 	scanner.WriteString("CSX Labs Rules!")
 	assert.True(t, scanner.Scan())
-	assert.Equal(t, "CSX Labs Rules!", scanner.Scanner.Text())
+	assert.Equal(t, "CSX Labs Rules!", scanner.Text())
 }

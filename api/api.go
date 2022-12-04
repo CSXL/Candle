@@ -31,11 +31,8 @@ type Response struct {
 	Stocks   map[string]Stock `json:"Time Series (5min)"`
 }
 
-func Get(url string, params map[string]string) ([]byte, error) {
-	client := &http.Client{
-		Timeout: time.Second * 10,
-	}
-	request, err := http.NewRequest("GET", url, nil)
+func _BuildRequest(method string, url string, params map[string]string) (*http.Request, error) {
+	request, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -44,12 +41,31 @@ func Get(url string, params map[string]string) ([]byte, error) {
 		q.Add(key, value)
 	}
 	request.URL.RawQuery = q.Encode()
-	response, err := client.Do(request)
+	return request, nil
+}
+
+func _ReadResponse(response *http.Response) ([]byte, error) {
+	defer response.Body.Close()
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
-	body, err := io.ReadAll(response.Body)
+	return body, nil
+}
+
+func Get(url string, params map[string]string) ([]byte, error) {
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	request, err := _BuildRequest("GET", url, params)
+	if err != nil {
+		return nil, err
+	}
+	response, err := client.Do(request)
+	if err != nil { // Example Errors: Timeout, Connection Refused, Connection Reset, etc.
+		return nil, err
+	}
+	body, err := _ReadResponse(response)
 	if err != nil {
 		return nil, err
 	}

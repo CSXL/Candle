@@ -1,15 +1,20 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/CSXL/Candle/api"
+	input "github.com/CSXL/Candle/util/input"
 )
 
-var osExit = os.Exit // We can now mock this function in our tests.
+// We can mock these functions in our tests
+var osExit = os.Exit
+var NewScanner input.ScannerInterface = input.NewScanner()
+
+// When true the main function will exit after the first command
+var TESTING_MODE = false
 
 func main() {
 	var COMMAND_PROVIDED = false
@@ -17,7 +22,7 @@ func main() {
 		COMMAND_PROVIDED = true
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
+	scanner := NewScanner
 
 	for {
 		fmt.Print("--> ")
@@ -52,7 +57,8 @@ func main() {
 		default:
 			fmt.Printf("Invalid command: %s\n", args[0])
 		}
-		if COMMAND_PROVIDED {
+
+		if COMMAND_PROVIDED || TESTING_MODE {
 			break
 		}
 	}

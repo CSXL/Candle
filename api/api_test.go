@@ -1,6 +1,9 @@
 package api
 
 import (
+	"bytes"
+	"io"
+	"net/http"
 	"os"
 	"testing"
 
@@ -32,6 +35,51 @@ func TestGet(t *testing.T) {
 	}
 
 	assert.Equal(t, expected_message, string(res))
+}
+
+// Test _BuildRequest with a valid URL
+func TestBuildRequest(t *testing.T) {
+	url := "https://example.com/hello_world?apikey=demo"
+	req, err := _BuildRequest("GET", url, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, url, req.URL.String())
+}
+
+// Test _BuildRequest with an invalid URL
+func TestBuildRequestInvalidMethod(t *testing.T) {
+	url := "https://example.com/"
+	_, err := _BuildRequest("INVALID METHOD", url, nil)
+	assert.Error(t, err)
+}
+
+func TestGetUnparsableURL(t *testing.T) {
+	bad_url := "this is not a URL"
+	_, err := Get(bad_url, nil)
+	assert.Error(t, err)
+}
+
+func TestGetConnectionRefused(t *testing.T) {
+	url := "https://example.com/hello_world?apikey=demo"
+	ErrConnectionRefused := &os.SyscallError{Syscall: "connect", Err: os.ErrDeadlineExceeded}
+	httpmock.RegisterResponder("GET", url,
+		httpmock.NewErrorResponder(ErrConnectionRefused))
+
+	_, err := Get(url, nil)
+	assert.Error(t, err)
+}
+
+func TestGetInvalidUTF8(t *testing.T) {
+	url := "https://example.com/hello_world?apikey=demo"
+	httpmock.RegisterResponder("GET", url,
+		func(req *http.Request) (*http.Response, error) {
+			return &http.Response{ // Custom response to bypass httpmock's UTF-8 validation
+				StatusCode: 200,
+				Body:       io.NopCloser(bytes.NewBufferString("\xff")),
+			}, nil
+		},
+	)
 }
 
 func TestRequestStockData(t *testing.T) {

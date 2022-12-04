@@ -7,6 +7,12 @@ import (
 	"sync"
 )
 
+type ScannerInterface interface {
+	Scan() bool
+	Text() string
+	WriteString(str string)
+}
+
 type Scanner struct {
 	*bufio.Scanner
 }
@@ -17,6 +23,14 @@ func NewScanner() *Scanner {
 
 func (s *Scanner) Scan() bool {
 	return s.Scanner.Scan()
+}
+
+func (s *Scanner) Text() string {
+	return s.Scanner.Text()
+}
+
+func (s *Scanner) WriteString(str string) {
+	// Do nothing
 }
 
 type MockScanner struct {

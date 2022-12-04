@@ -24,3 +24,11 @@ test:
 	else \
 		go test -v ./$$PACKAGE; \
 	fi
+
+coverage:
+	@if [ -z "$$PACKAGE" ]; then \
+		go test -coverprofile=coverage.out ./...; \
+	else \
+		go test -coverprofile=coverage.out ./$$PACKAGE; \
+	fi
+	go tool cover -html=coverage.out

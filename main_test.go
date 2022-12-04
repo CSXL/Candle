@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	input "github.com/CSXL/Candle/util/input"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,6 +26,21 @@ var original_arguments []string
 func TestMain(m *testing.M) {
 	original_arguments = os.Args // Some tests need to access the original arguments to re-run the test command.
 	os.Exit(m.Run())
+}
+
+func TestCommandUsingInput(t *testing.T) {
+	// Utilize the input package to mock the Scanner function
+	NewScanner = input.NewMockScanner()
+	NewScanner.WriteString("about")
+	os.Args = []string{"candle"}
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	TESTING_MODE = true // So that the main function exits after the command
+	main()
+	w.Close()
+	out, _ := io.ReadAll(r)
+	os.Stdout = os.Stderr
+	assert.Equal(t, "--> Candle CLI\nCSX Labs\nMade w/ <3 by @absozero and @ecsbeats\n", string(out))
 }
 
 // Test the get-info command
