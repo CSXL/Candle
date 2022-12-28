@@ -1,4 +1,5 @@
-// Path: api/finhub_test.go
+// These tests require a .env file with the following content:
+// FINHUB_API = <your api key>
 package api
 
 import (
@@ -27,7 +28,7 @@ func TestGetCurrentPrice(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(*quote.C)
+	t.Log("Percent Change of Apple: ", quote.PercentChange)
 }
 
 func TestGetCandles(t *testing.T) {
@@ -63,6 +64,6 @@ func TestReceiveRealtimeData(t *testing.T) {
 	}
 	ch, stop := client.ReceiveRealtimeData(w)
 	quote := <-ch
-	t.Log(quote)
+	t.Log("From Websocket: Current Price of", quote.Symbol, quote.Price)
 	stop <- 1
 }

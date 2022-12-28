@@ -6,6 +6,7 @@ require (
 	github.com/Finnhub-Stock-API/finnhub-go/v2 v2.0.15
 	github.com/gorilla/websocket v1.5.0
 	github.com/joho/godotenv v1.4.0
+	golang.org/x/exp v0.0.0-20221227203929-1b447090c38c
 )
 
 require (
