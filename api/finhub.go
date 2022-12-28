@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	finhub "github.com/Finnhub-Stock-API/finnhub-go/v2"
 	websocket "github.com/gorilla/websocket"
@@ -64,7 +64,7 @@ func (c *FinHubClient) GetCandles(symbol string, resolution string, from int64, 
 	}
 	// Serialize the response
 	var candles Candles
-	res_body, err := ioutil.ReadAll(res.Body)
+	res_body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return Candles{}, err
 	}
