@@ -18,3 +18,6 @@ vendor/
 bin/
 
 __debug_bin
+
+# Environtment variables
+.env
