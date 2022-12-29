@@ -1,5 +1,3 @@
-// These tests require a .env file with the following content:
-// FINHUB_API = <your api key>
 package api
 
 import (
@@ -22,9 +20,9 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestGetCurrentPrice(t *testing.T) {
+func TestGetQuote(t *testing.T) {
 	client := NewFinHubClient(apiKey)
-	quote, err := client.GetCurrentPrice("AAPL")
+	quote, err := client.GetQuote("AAPL")
 	if err != nil {
 		t.Error(err)
 	}

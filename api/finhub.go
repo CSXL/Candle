@@ -58,14 +58,14 @@ func NewFinHubClient(apiKey string) *FinHubClient {
 	}
 }
 
-func (c *FinHubClient) GetCurrentPrice(symbol string) (Quote, error) {
+func (c *FinHubClient) GetQuote(symbol string) (Quote, error) {
 	// Documentations: https://finnhub.io/docs/api/quote
 	data, _, err := c.Quote(context.Background()).Symbol(symbol).Execute()
 	if err != nil {
 		return Quote{}, err
 	}
 	if slices.Contains([]bool{data.HasC(), data.HasD(), data.HasDp(), data.HasH(), data.HasL(), data.HasO(), data.HasPc()}, false) {
-		return Quote{}, fmt.Errorf("Missing data for symbol %s", symbol)
+		return Quote{}, fmt.Errorf("missing data for symbol %s", symbol)
 	}
 	quote := Quote{
 		Symbol:        symbol,
