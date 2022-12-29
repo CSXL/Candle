@@ -40,6 +40,7 @@ type Trade struct {
 }
 
 type Candles struct {
+	Symbol    string
 	Open      []float32
 	High      []float32
 	Low       []float32
@@ -96,6 +97,7 @@ func (c *FinHubClient) GetCandles(symbol string, resolution string, from int64, 
 		return Candles{}, fmt.Errorf("status is %s", *data.S)
 	}
 	candles := Candles{
+		Symbol:    symbol,
 		Open:      *data.O,
 		High:      *data.H,
 		Low:       *data.L,
