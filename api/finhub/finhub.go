@@ -35,7 +35,7 @@ type WebsocketResponse struct {
 type Trade struct {
 	Symbol    string  `json:"s"`
 	Price     float32 `json:"p"`
-	Volume    int     `json:"v"`
+	Volume    float32 `json:"v"`
 	Timestamp int64   `json:"t"`
 }
 

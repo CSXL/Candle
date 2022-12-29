@@ -131,7 +131,7 @@ func TestOpenRealtimeStream(t *testing.T) {
 	// TODO: Mock gorilla websocket
 	t.Skip("This test requires a websocket connection, which is not supported by gock.")
 	client := NewFinHubClient(apiKey)
-	w, err := client.OpenRealtimeStream([]string{"AAPL", "MSFT"})
+	w, err := client.OpenRealtimeStream([]string{"COINBASE:BTC-USD", "MSFT"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -149,12 +149,12 @@ func TestReceiveRealtimeData(t *testing.T) {
 	// TODO: Mock gorilla websocket
 	t.Skip("This test requires a websocket connection, which is not supported by gock.")
 	client := NewFinHubClient(apiKey)
-	w, err := client.OpenRealtimeStream([]string{"AAPL", "MSFT"})
+	w, err := client.OpenRealtimeStream([]string{"COINBASE:BTC-USD", "MSFT"})
 	if err != nil {
 		t.Error(err)
 	}
 	ch, stop := client.ReceiveRealtimeData(w)
 	quote := <-ch
 	t.Log("From Websocket: Current Price of", quote.Symbol, quote.Price)
-	stop <- 1
+	client.CloseRealtimeStream(stop)
 }
