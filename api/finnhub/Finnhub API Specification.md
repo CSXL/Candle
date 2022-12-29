@@ -1,8 +1,8 @@
-# Finhub API Specification
+# Finnhub API Specification
 This document details the API endpoints that we will be using from the Finhub API.
 
 ## Data Sources and Documentation
-We based this information off of the [Finhub API documentation](https://finnhub.io/docs/api) and their [swagger file](https://finnhub.io/api/v1/swagger.json).
+We based this information off of the [Finnhub API documentation](https://finnhub.io/docs/api) and their [swagger file](https://finnhub.io/api/v1/swagger.json).
 
 ## Metadata
 ### Base URL

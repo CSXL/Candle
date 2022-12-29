@@ -1,18 +1,18 @@
-// Contains wrappers for the FinHub API.
-package api
+// Contains wrappers for the FinnHub API.
+package finnhub
 
 import (
 	"context"
 	"fmt"
 	"log"
 
-	finhub "github.com/Finnhub-Stock-API/finnhub-go/v2"
+	"github.com/Finnhub-Stock-API/finnhub-go/v2"
 	websocket "github.com/gorilla/websocket"
 	"golang.org/x/exp/slices"
 )
 
-type FinHubClient struct {
-	*finhub.DefaultApiService
+type FinnHubClient struct {
+	*finnhub.DefaultApiService
 	apiKey string
 }
 
@@ -49,17 +49,17 @@ type Candles struct {
 	Timestamp []int64
 }
 
-func NewFinHubClient(apiKey string) *FinHubClient {
-	config := finhub.NewConfiguration()
+func NewFinnHubClient(apiKey string) *FinnHubClient {
+	config := finnhub.NewConfiguration()
 	config.AddDefaultHeader("X-Finnhub-Token", apiKey)
-	DefaultApiService := finhub.NewAPIClient(config).DefaultApi
-	return &FinHubClient{
+	DefaultApiService := finnhub.NewAPIClient(config).DefaultApi
+	return &FinnHubClient{
 		DefaultApiService: DefaultApiService,
 		apiKey:            apiKey,
 	}
 }
 
-func (c *FinHubClient) GetQuote(symbol string) (Quote, error) {
+func (c *FinnHubClient) GetQuote(symbol string) (Quote, error) {
 	// Documentations: https://finnhub.io/docs/api/quote
 	data, _, err := c.Quote(context.Background()).Symbol(symbol).Execute()
 	if err != nil {
@@ -81,7 +81,7 @@ func (c *FinHubClient) GetQuote(symbol string) (Quote, error) {
 	return quote, err
 }
 
-func (c *FinHubClient) GetCandles(symbol string, resolution string, from int64, to int64) (Candles, error) {
+func (c *FinnHubClient) GetCandles(symbol string, resolution string, from int64, to int64) (Candles, error) {
 	// Documentation: https://finnhub.io/docs/api/stock-candles
 	// resolution: 1, 5, 15, 30, 60, D, W, M
 	// from: Unix timestamp
@@ -108,7 +108,7 @@ func (c *FinHubClient) GetCandles(symbol string, resolution string, from int64, 
 	return candles, nil
 }
 
-func (c *FinHubClient) OpenRealtimeStream(symbols []string) (*websocket.Conn, error) {
+func (c *FinnHubClient) OpenRealtimeStream(symbols []string) (*websocket.Conn, error) {
 	// Documentation: https://finnhub.io/docs/api/websocket-trades
 	apiKey := c.apiKey
 	w, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("wss://ws.finnhub.io?token=%s", apiKey), nil)
@@ -128,7 +128,7 @@ func (c *FinHubClient) OpenRealtimeStream(symbols []string) (*websocket.Conn, er
 	return w, nil
 }
 
-func (c *FinHubClient) ReceiveRealtimeData(w *websocket.Conn) (chan Trade, chan int) {
+func (c *FinnHubClient) ReceiveRealtimeData(w *websocket.Conn) (chan Trade, chan int) {
 	// Documentation: https://finnhub.io/docs/api/websocket-trades
 	ch := make(chan Trade, 100)
 	stop := make(chan int, 1)
@@ -154,6 +154,6 @@ func (c *FinHubClient) ReceiveRealtimeData(w *websocket.Conn) (chan Trade, chan 
 	return ch, stop
 }
 
-func (c *FinHubClient) CloseRealtimeStream(stop chan int) {
+func (c *FinnHubClient) CloseRealtimeStream(stop chan int) {
 	stop <- 1
 }

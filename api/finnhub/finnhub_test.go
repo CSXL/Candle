@@ -1,4 +1,4 @@
-package api
+package finnhub
 
 import (
 	"encoding/json"
@@ -68,7 +68,7 @@ func TestGetQuote(t *testing.T) {
 		Reply(200).
 		JSON(sample_response)
 
-	client := NewFinHubClient(apiKey)
+	client := NewFinnHubClient(apiKey)
 	quote, err := client.GetQuote(SYMBOL)
 	if err != nil {
 		t.Error(err)
@@ -113,7 +113,7 @@ func TestGetCandles(t *testing.T) {
 		Reply(200).
 		JSON(sample_response)
 
-	client := NewFinHubClient(apiKey)
+	client := NewFinnHubClient(apiKey)
 	candles, err := client.GetCandles(SYMBOL, RESOLUTION, START_TIME, END_TIME)
 	if err != nil {
 		t.Error(err)
@@ -130,7 +130,7 @@ func TestGetCandles(t *testing.T) {
 func TestOpenRealtimeStream(t *testing.T) {
 	// TODO: Mock gorilla websocket
 	t.Skip("This test requires a websocket connection, which is not supported by gock.")
-	client := NewFinHubClient(apiKey)
+	client := NewFinnHubClient(apiKey)
 	w, err := client.OpenRealtimeStream([]string{"COINBASE:BTC-USD", "MSFT"})
 	if err != nil {
 		t.Error(err)
@@ -148,7 +148,7 @@ func TestOpenRealtimeStream(t *testing.T) {
 func TestReceiveRealtimeData(t *testing.T) {
 	// TODO: Mock gorilla websocket
 	t.Skip("This test requires a websocket connection, which is not supported by gock.")
-	client := NewFinHubClient(apiKey)
+	client := NewFinnHubClient(apiKey)
 	w, err := client.OpenRealtimeStream([]string{"COINBASE:BTC-USD", "MSFT"})
 	if err != nil {
 		t.Error(err)
