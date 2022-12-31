@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"github.com/CSXL/Candle/tui"
 )
 
 func main() {
-	fmt.Println("Hello world")
+	tui.Run()
 }
