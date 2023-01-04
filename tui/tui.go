@@ -92,7 +92,10 @@ func (m model) View() string {
 }
 
 func Run() error {
-	p := tea.NewProgram(model{})
+	p := tea.NewProgram(
+		model{},
+		tea.WithAltScreen(),
+	)
 	_, err := p.Run()
 	return err
 }
