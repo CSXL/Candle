@@ -5,6 +5,7 @@ import (
 
 	api "github.com/CSXL/Candle/api"
 	testutils "github.com/CSXL/Candle/api/testutils"
+	"github.com/charmbracelet/lipgloss"
 )
 
 var sampleCandles api.Candles
@@ -49,9 +50,13 @@ func TestNew(t *testing.T) {
 	WIDTH := 80
 	HEIGHT := 20
 	TITLE := "Test Chart"
-	BULLISH_COLOR := "#1aa260"
-	BEARISH_COLOR := "#e74c3c"
-	chart := New(WIDTH, HEIGHT, TITLE, BULLISH_COLOR, BEARISH_COLOR, sampleCandles, Range{Min: 0, Max: 0})
+	COLORS := Colors{
+		Primary: "#2c3e50",
+		Text:    "#ecf0f1",
+		Bearish: "#e74c3c",
+		Bullish: "#1aa260",
+	}
+	chart := New(WIDTH, HEIGHT, TITLE, COLORS, sampleCandles, Range{Min: 0, Max: 0})
 	if chart.Width != WIDTH {
 		t.Errorf("Width was incorrect, got: %d, want: %d.", chart.Width, WIDTH)
 	}
@@ -61,11 +66,8 @@ func TestNew(t *testing.T) {
 	if chart.Title != TITLE {
 		t.Errorf("Title was incorrect, got: %s, want: %s.", chart.Title, TITLE)
 	}
-	if chart.BullishColor != BULLISH_COLOR {
-		t.Errorf("BullishColor was incorrect, got: %s, want: %s.", chart.BullishColor, BULLISH_COLOR)
-	}
-	if chart.BearishColor != BEARISH_COLOR {
-		t.Errorf("BearishColor was incorrect, got: %s, want: %s.", chart.BearishColor, BEARISH_COLOR)
+	if chart.Colors != COLORS {
+		t.Errorf("Colors were incorrect, got: %v, want: %v.", chart.Colors, COLORS)
 	}
 }
 
@@ -73,9 +75,13 @@ func TestDraw(t *testing.T) {
 	WIDTH := 80
 	HEIGHT := 20
 	TITLE := "Test Chart"
-	BULLISH_COLOR := "#1aa260"
-	BEARISH_COLOR := "#e74c3c"
-	chart := New(WIDTH, HEIGHT, TITLE, BULLISH_COLOR, BEARISH_COLOR, sampleCandles, Range{Min: 0, Max: 0})
+	COLORS := Colors{
+		Primary: lipgloss.Color("#2c3e50"),
+		Text:    lipgloss.Color("#ecf0f1"),
+		Bearish: lipgloss.Color("#e74c3c"),
+		Bullish: lipgloss.Color("#1aa260"),
+	}
+	chart := New(WIDTH, HEIGHT, TITLE, COLORS, sampleCandles, Range{Min: 0, Max: 0})
 	chart.Draw()
-	t.Logf("\n%s\n", chart.content)
+	t.Logf("\n%s\n", chart.View())
 }
