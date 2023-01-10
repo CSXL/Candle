@@ -1,0 +1,12 @@
+version: '3.8'
+
+services: 
+  app:
+    image: golang:1.19
+    container_name: candle
+    volumes:
+        - .:/Candle
+    working_dir: /Candle
+    command: tail -f /dev/null
+
+# Enter development environment with `docker-compose up -d && docker-compose exec app /bin/bash`

@@ -80,6 +80,7 @@ func (m model) View() string {
 	s += titleStyle.Render("Candle - Bubbletea Boilerplate")
 	s += "\n"
 	for _, frame := range []Frame{FrameQuote, FrameChart, FrameREPL} {
+		
 		if m.Frame == frame {
 			s += itemFocusedStyle.Render(" > " + frame.String())
 		} else {
